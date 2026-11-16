@@ -1,7 +1,9 @@
-import { copyFile, mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const outputDirectory = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-// Preserve every byte of the supplied artwork in the output copy.
+const sourceDirectory = dirname(fileURLToPath(import.meta.url));
+const outputDirectory = resolve(process.env.MAKEFUN_OUTPUT_DIR ?? './out');
+const bytes = await readFile(join(sourceDirectory, 'entry.png'));
 await mkdir(outputDirectory, { recursive: true });
-await copyFile(new URL('./entry.png', import.meta.url), join(outputDirectory, 'entry.png'));
+await writeFile(join(outputDirectory, 'entry.png'), bytes);
